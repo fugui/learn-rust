@@ -15,7 +15,5 @@ fn main() {
         facts[i] = 0;
     }
 
-    for i in 0..facts.len() {
-        println!("At {} value {}", i, facts[i])
-    }
+    println!("{:?}", facts);
 }
