@@ -29,6 +29,18 @@ where
         }
     }
 
+    pub fn pop(&mut self) -> Option<T> {
+        return match self {
+            Link::None => Option::None,
+            Link::Tail { item } => {
+                let ret = Some(*item);
+                *self = Link::None;
+                ret
+            }
+            Link::Link { next, .. } => next.pop(),
+        };
+    }
+
     pub fn traverse(&self) {
         match self {
             Link::None => return,
@@ -45,5 +57,7 @@ fn main() {
     let mut root = Link::Tail { item: 20 };
     root.push(50);
     root.push(60);
+    println!("Pop {}", root.pop().unwrap());
+    root.push(70);
     root.traverse();
 }
