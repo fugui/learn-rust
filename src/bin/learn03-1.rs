@@ -5,42 +5,42 @@ use std::fmt::Display;
  * https://medium.com/swlh/implementing-a-linked-list-in-rust-c25e460c3676
  */
 
-enum Link<T> {
+enum LinkedList<T> {
     None,
     Tail { item: T },
-    Link { item: T, next: Box<Link<T>> },
+    Link { item: T, next: Box<LinkedList<T>> },
 }
 
-impl<T> Link<T>
+impl<T> LinkedList<T>
 where
     T: Copy,
     T: Display,
 {
     pub fn push(&mut self, value: T) {
         match self {
-            Link::None => *self = Link::Tail { item: value },
-            Link::Tail { item } => {
-                *self = Link::Link {
+            LinkedList::None => *self = LinkedList::Tail { item: value },
+            LinkedList::Tail { item } => {
+                *self = LinkedList::Link {
                     item: *item,
-                    next: Box::new(Link::Tail { item: value }),
+                    next: Box::new(LinkedList::Tail { item: value }),
                 }
             }
-            Link::Link { next, .. } => next.push(value),
+            LinkedList::Link { next, .. } => next.push(value),
         }
     }
 
     pub fn pop(&mut self) -> Option<T> {
         return match self {
-            Link::None => Option::None,
-            Link::Tail { item } => {
+            LinkedList::None => Option::None,
+            LinkedList::Tail { item } => {
                 let ret = Some(*item);
-                *self = Link::None;
+                *self = LinkedList::None;
                 ret
             }
-            Link::Link { next, item: value } => {
-                if let Link::Tail { item } = next.as_ref() {
+            LinkedList::Link { next, item: value } => {
+                if let LinkedList::Tail { item } = next.as_ref() {
                     let ret = Some(*item);
-                    *self = Link::Tail { item: *value };
+                    *self = LinkedList::Tail { item: *value };
                     ret
                 } else {
                     next.pop()
@@ -51,9 +51,9 @@ where
 
     pub fn traverse(&self) {
         match self {
-            Link::None => return,
-            Link::Tail { item } => println!("->{}", item),
-            Link::Link { item, next } => {
+            LinkedList::None => return,
+            LinkedList::Tail { item } => println!("->{}", item),
+            LinkedList::Link { item, next } => {
                 println!("->{}", item);
                 next.traverse()
             }
@@ -62,7 +62,7 @@ where
 }
 
 fn main() {
-    let mut root = Link::Tail { item: "Great" };
+    let mut root = LinkedList::Tail { item: "Great" };
     root.push("50");
     root.push("60");
     println!("Pop {}", root.pop().unwrap());
