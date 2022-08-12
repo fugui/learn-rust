@@ -37,7 +37,15 @@ where
                 *self = Link::None;
                 ret
             }
-            Link::Link { next, .. } => next.pop(),
+            Link::Link { next, item: value } => {
+                if let Link::Tail { item } = next.as_ref() {
+                    let ret = Some(*item);
+                    *self = Link::Tail { item: *value };
+                    ret
+                } else {
+                    next.pop()
+                }
+            }
         };
     }
 
@@ -54,10 +62,11 @@ where
 }
 
 fn main() {
-    let mut root = Link::Tail { item: 20 };
-    root.push(50);
-    root.push(60);
+    let mut root = Link::Tail { item: "Great" };
+    root.push("50");
+    root.push("60");
     println!("Pop {}", root.pop().unwrap());
-    root.push(70);
+    println!("Pop {}", root.pop().unwrap());
+    root.push("China");
     root.traverse();
 }
