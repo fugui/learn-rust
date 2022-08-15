@@ -15,32 +15,33 @@ impl<T> LinkedList<T>
 where
     T: Copy,
     T: Display,
+    T: PartialEq,
 {
     pub fn push(&mut self, value: T) {
         match self {
-            LinkedList::None => *self = LinkedList::Tail { item: value },
-            LinkedList::Tail { item } => {
-                *self = LinkedList::Link {
+            Self::None => *self = Self::Tail { item: value },
+            Self::Tail { item } => {
+                *self = Self::Link {
                     item: *item,
-                    next: Box::new(LinkedList::Tail { item: value }),
+                    next: Box::new(Self::Tail { item: value }),
                 }
             }
-            LinkedList::Link { next, .. } => next.push(value),
+            Self::Link { next, .. } => next.push(value),
         }
     }
 
     pub fn pop(&mut self) -> Option<T> {
         return match self {
-            LinkedList::None => Option::None,
-            LinkedList::Tail { item } => {
+            Self::None => Option::None,
+            Self::Tail { item } => {
                 let ret = Some(*item);
-                *self = LinkedList::None;
+                *self = Self::None;
                 ret
             }
-            LinkedList::Link { next, item: value } => {
-                if let LinkedList::Tail { item } = next.as_ref() {
+            Self::Link { next, item: value } => {
+                if let Self::Tail { item } = next.as_ref() {
                     let ret = Some(*item);
-                    *self = LinkedList::Tail { item: *value };
+                    *self = Self::Tail { item: *value };
                     ret
                 } else {
                     next.pop()
@@ -49,11 +50,29 @@ where
         };
     }
 
+    pub fn delete(&mut self, value: T) {
+        match self {
+            Self::Tail { item } if *item == value => *self = Self::None,
+            Self::Link { item, next } if *item != value => next.delete(value),
+            Self::Link { item, next } if *item == value => {
+                if let Self::Tail { item } = next.as_mut() {
+                    *self = Self::Tail { item: *item }
+                } else if let Self::Link { item, next: n } = next.as_mut() {
+                    *self = Self::Link {
+                        item: *item,
+                        next: std::mem::replace(n, Box::new(Self::None)),
+                    }
+                }
+            }
+            _ => return,
+        }
+    }
+
     pub fn traverse(&self) {
         match self {
-            LinkedList::None => return,
-            LinkedList::Tail { item } => println!("->{}", item),
-            LinkedList::Link { item, next } => {
+            Self::None => return,
+            Self::Tail { item } => println!("->{}", item),
+            Self::Link { item, next } => {
                 println!("->{}", item);
                 next.traverse()
             }
@@ -68,5 +87,12 @@ fn main() {
     println!("Pop {}", root.pop().unwrap());
     println!("Pop {}", root.pop().unwrap());
     root.push("China");
+    root.push("70");
+    root.push("80");
+    root.push("90");
+    root.push("100");
+    root.delete("70");
+    root.delete("100");
+    root.delete("90");
     root.traverse();
 }
