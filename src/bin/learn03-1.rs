@@ -96,3 +96,14 @@ fn main() {
     root.delete("90");
     root.traverse();
 }
+
+#[cfg(test)]
+mod test {
+    use super::LinkedList;
+
+    #[test]
+    fn basic_test_list() {
+        let mut root = LinkedList::Tail { item: "Great" };
+        assert_eq!(root.pop(), Some("Great"));
+    }
+}
