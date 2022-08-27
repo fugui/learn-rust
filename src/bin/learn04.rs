@@ -71,7 +71,7 @@ where
 }
 
 #[test]
-fn peek() {
+fn test_peek() {
     let mut list = LinkedList::new();
     assert_eq!(list.peek(), None);
     list.push(1);
@@ -79,6 +79,33 @@ fn peek() {
     list.push(3);
 
     assert_eq!(list.peek(), Some(&3));
+}
+
+impl<T> Iterator for LinkedList<T>
+where
+    T: Display,
+    T: Copy,
+{
+    type Item = T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.pop()
+    }
+}
+
+#[test]
+fn test_iterator() {
+    let mut list = LinkedList::new();
+    list.push("A");
+    list.push("B");
+    list.push("C");
+
+    assert_eq!(list.next(), Some("C"));
+
+    while let Some(value) = list.next() {
+        println!("{}", value);
+    }
+    assert_eq!(list.next(), None);
 }
 
 fn main() {
