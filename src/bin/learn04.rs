@@ -15,6 +15,7 @@ type Link<T> = Option<Box<Node<T>>>;
 struct LinkedList<T>
 where
     T: Display,
+    T: Copy,
 {
     head: Link<T>,
 }
@@ -22,6 +23,7 @@ where
 impl<T> LinkedList<T>
 where
     T: Display,
+    T: Copy,
 {
     fn new() -> Self {
         LinkedList { head: None }
@@ -48,11 +50,16 @@ where
             node.value
         })
     }
+
+    fn peek(&self) -> Option<&T> {
+        self.head.as_ref().map(|node| &node.value)
+    }
 }
 
 impl<T> Drop for LinkedList<T>
 where
     T: Display,
+    T: Copy,
 {
     fn drop(&mut self) {
         let mut current = self.head.take(); //std::mem::replace(&mut self.head, None);
@@ -63,12 +70,24 @@ where
     }
 }
 
+#[test]
+fn peek() {
+    let mut list = LinkedList::new();
+    assert_eq!(list.peek(), None);
+    list.push(1);
+    list.push(2);
+    list.push(3);
+
+    assert_eq!(list.peek(), Some(&3));
+}
+
 fn main() {
     let mut list = LinkedList::new();
     list.push(10);
     list.push(20);
     list.pop();
     list.push(30);
+    println!("Peek value: {:?}", list.peek());
     println!("{:?}", list);
     drop(list);
 }
