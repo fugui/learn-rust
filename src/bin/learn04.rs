@@ -27,14 +27,18 @@ impl LinkedList {
     }
 
     fn pop(&mut self) -> Option<i32> {
-        match self.head.take() {
+        /*match self.head.take() {
             //std::mem::replace(&mut self.head, None) {
             Option::None => None,
             Option::Some(node) => {
                 self.head = node.next;
                 Some(node.value)
             }
-        }
+        }*/
+        self.head.take().map(|node| {
+            self.head = node.next;
+            node.value
+        })
     }
 }
 
