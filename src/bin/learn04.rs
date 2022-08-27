@@ -22,12 +22,13 @@ impl LinkedList {
     fn push(&mut self, value: i32) {
         self.head = Some(Box::new(Node {
             value: value,
-            next: std::mem::replace(&mut self.head, None),
+            next: self.head.take(), //std::mem::replace(&mut self.head, None),
         }))
     }
 
     fn pop(&mut self) -> Option<i32> {
-        match std::mem::replace(&mut self.head, None) {
+        match self.head.take() {
+            //std::mem::replace(&mut self.head, None) {
             Option::None => None,
             Option::Some(node) => {
                 self.head = node.next;
@@ -39,10 +40,10 @@ impl LinkedList {
 
 impl Drop for LinkedList {
     fn drop(&mut self) {
-        let mut current = std::mem::replace(&mut self.head, None);
+        let mut current = self.head.take(); //std::mem::replace(&mut self.head, None);
         while let Some(mut node) = current {
             println!("Deleting {}", node.value);
-            current = std::mem::replace(&mut node.next, None)
+            current = node.next.take(); //std::mem::replace(&mut node.next, None)
         }
     }
 }
