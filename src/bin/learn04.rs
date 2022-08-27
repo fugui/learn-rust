@@ -37,6 +37,16 @@ impl LinkedList {
     }
 }
 
+impl Drop for LinkedList {
+    fn drop(&mut self) {
+        let mut current = std::mem::replace(&mut self.head, None);
+        while let Some(mut node) = current {
+            println!("Deleting {}", node.value);
+            current = std::mem::replace(&mut node.next, None)
+        }
+    }
+}
+
 fn main() {
     let mut list = LinkedList::new();
     list.push(10);
@@ -44,4 +54,5 @@ fn main() {
     list.pop();
     list.push(30);
     println!("{:?}", list);
+    drop(list);
 }
